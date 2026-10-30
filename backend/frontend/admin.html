@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <h2>Community Problem Platform</h2>
+        <a href="dashboard.html">Citizen Dashboard</a>
+    </header>
+
+    <main class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Monitor community problems reported by citizens.</p>
+
+        <section class="summary">
+            <div class="card">
+                <h3>Total Reports</h3>
+                <p id="totalReports">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Pending Reports</h3>
+                <p id="pendingReports">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Resolved Reports</h3>
+                <p id="resolvedReports">0</p>
+            </div>
+        </section>
+
+        <h2>Community Reports</h2>
+        <p id="message">Loading reports...</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Category</th>
+
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTable">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>

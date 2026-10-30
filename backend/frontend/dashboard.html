@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Citizen Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 30px;
+            background: #1e3a8a;
+            color: white;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .navbar nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar nav a:hover {
+            text-decoration: underline;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* MAIN CONTAINER */
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        /* WELCOME */
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .welcome h1 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+
+        /* PROFILE */
+
+        .profile-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .profile-card h2 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+
+        .profile-info p {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-info strong {
+            display: inline-block;
+            width: 100px;
+        }
+
+        /* REPORT BUTTON */
+
+        .action-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .action-card h2 {
+            color: #1e3a8a;
+        }
+
+        .report-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .report-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* STATISTICS */
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .stat-card h3 {
+            color: #555;
+        }
+
+        .stat-card p {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 0;
+        }
+
+        /* MY REPORTS */
+
+        .reports {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .reports h2 {
+            color: #1e3a8a;
+        }
+
+        .report-item {
+            border: 1px solid #ddd;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .report-item h3 {
+            margin-top: 0;
+            color: #1e3a8a;
+        }
+
+        .report-item p {
+            line-height: 1.6;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status.resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .navbar nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            Community Problem Platform
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- MAIN DASHBOARD -->
+
+    <main class="container">
+
+
+        <!-- USER PROFILE -->
+
+        <section class="profile-card">
+
+            <h2>My Profile</h2>
+
+            <div class="profile-info">
+
+                <p>
+                    <strong>Name:</strong>
+                    <span id="profileName">Loading...</span>
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    <span id="profileEmail">Loading...</span>
+                </p>
+
+                <p>
+                    <strong>Role:</strong>
+                    <span id="profileRole">Citizen</span>
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome">
+
+            <h1>Citizen Dashboard</h1>
+
+            <p>
+                Welcome to your community problem dashboard.
+            </p>
+
+            <p>
+                Report community problems and track your reports.
+            </p>
+
+        </section>
+
+
+        <!-- REPORT PROBLEM -->
+
+        <section class="actions">
+
+            <div class="action-card">
+
+                <h2>Report a Problem</h2>
+
+                <p>
+                    Report problems in your community such as
+                    road damage, waste management, water problems,
+                    streetlight problems, and drainage problems.
+                </p>
+
+                <button
+                    class="report-btn"
+                    onclick="reportProblem()">
+
+                    Report a Problem
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+
+        <section class="statistics">
+
+
+            <div class="stat-card">
+
+                <h3>Total Reports</h3>
+
+                <p id="totalReports">0</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>Pending</h3>
+
+                <p id="pendingReports">0</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>Resolved</h3>
+
+                <p id="resolvedReports">0</p>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- MY REPORTS -->
+
+        <section class="reports">
+
+            <h2>My Reports</h2>
+
+            <p>
+                Reports submitted by your account.
+            </p>
+
+            <div id="reportsContainer">
+
+                <p class="empty-message">
+                    Loading your reports...
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- DASHBOARD JAVASCRIPT -->
+
+    <script src="dashboard.js"></script>
+
+
+    <!-- PROFILE AND NAVIGATION -->
+
+    <script>
+
+        // Check logged-in user
+
+        const userId = localStorage.getItem("user_id");
+
+        const userName = localStorage.getItem("name");
+
+        const userEmail = localStorage.getItem("email");
+
+        const userRole = localStorage.getItem("role");
+
+
+        // Redirect if user is not logged in
+
+        if (!userId) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        // Display user profile
+
+        document.getElementById("profileName").textContent =
+            userName || "Not available";
+
+
+        document.getElementById("profileEmail").textContent =
+            userEmail || "Not available";
+
+
+        document.getElementById("profileRole").textContent =
+            userRole || "citizen";
+
+
+        // Open report page
+
+        function reportProblem() {
+
+            window.location.href = "report.html";
+
+        }
+
+
+        // Logout
+
+        function logout() {
+
+            localStorage.removeItem("user_id");
+
+            localStorage.removeItem("name");
+
+            localStorage.removeItem("email");
+
+            localStorage.removeItem("role");
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

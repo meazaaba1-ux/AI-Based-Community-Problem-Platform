@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Community Problem</title>
+    <link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">Community Problem Platform</div>
+    <a href="dashboard.html">Dashboard</a>
+</header>
+
+<main class="container">
+    <div class="form-card">
+        <h1>Report a Community Problem</h1>
+        <p>Submit a community problem for review.</p>
+
+        <form id="reportForm" enctype="multipart/form-data">
+
+            <label for="title">Problem Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                maxlength="200"
+                placeholder="Example: Broken street light"
+                required
+            >
+
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                maxlength="1000"
+                rows="5"
+                placeholder="Describe the problem"
+                required
+            ></textarea>
+
+            <label for="location">Location / Area Name</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                maxlength="255"
+                placeholder="Example: Main road near school"
+                required
+            >
+
+            <label for="image">Problem Image (optional)</label>
+            <input
+                type="file"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+            >
+
+            <p class="help-text">
+                JPG, PNG, or WEBP; maximum 5 MB.
+            </p>
+
+            <button type="submit" id="submitBtn">
+                Submit Report
+            </button>
+
+        </form>
+
+        <p id="message" role="status" aria-live="polite"></p>
+    </div>
+</main>
+
+<script src="report.js"></script>
+</body>
+</html>
+```
