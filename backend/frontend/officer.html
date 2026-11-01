@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer Dashboard</title>
+
+
+
+    
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #f1f5f9;
+        margin: 0;
+        padding: 30px;
+        color: #1e293b;
+    }
+
+    h1 {
+        background: #1e40af;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    h2 {
+        margin-top: 30px;
+        color: #1e40af;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th {
+        background: #2563eb;
+        color: white;
+        padding: 15px;
+        text-align: left;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:hover {
+        background: #eff6ff;
+    }
+
+    td[colspan="6"] {
+        text-align: center;
+        padding: 25px;
+        color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        table {
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 8px;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+  <h1>
+    Officer Dashboard -
+    <span id="officerName"></span>
+</h1>
+
+    <h2>My Assigned Reports</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody id="reportsTable">
+            <tr>
+                <td colspan="6">Loading reports...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Officer ID 6 is the Water Officer we created
+       const officerId = sessionStorage.getItem("officer_id");
+
+if (!officerId) {
+    window.location.href = "officer-login.html";
+}
+
+        async function loadReports() {
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:8000/officer/problems?officer_id=${officerId}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to load reports");
+                }
+
+                const reports = await response.json();
+
+                const table = document.getElementById("reportsTable");
+                table.innerHTML = "";
+
+                if (reports.length === 0) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="6">No assigned reports yet.</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                reports.forEach(report => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${report.id}</td>
+                        <td>${report.title}</td>
+                        <td>${report.description}</td>
+                        <td>${report.location}</td>
+                        <td>${report.category || "Not categorized"}</td>
+                        <td>${report.status}</td>
+                    `;
+
+                    table.appendChild(row);
+                });
+
+            } catch (error) {
+                document.getElementById("reportsTable").innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            Cannot load reports. Check that FastAPI is running.
+                        </td>
+                    </tr>
+                `;
+                console.error(error);
+            }
+        }
+
+
+        
+
+        
+         
+loadReports();
+
+const officerName = sessionStorage.getItem("officer_name");
+
+document.getElementById("officerName").textContent =
+    officerName || "Officer";
+
+    
+    </script>
+
+</body>
+</html>

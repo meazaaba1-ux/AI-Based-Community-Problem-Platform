@@ -105,6 +105,59 @@ except Exception as error:
 # --------------------------------------------------
 
 @app.post("/register", response_model=UserResponse)
+
+
+# --------------------------------------------------
+# CREATE OFFICER ACCOUNT
+# --------------------------------------------------
+
+class OfficerCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+    category: str
+
+
+@app.post("/create-officer")
+def create_officer(
+    officer: OfficerCreate,
+    db: Session = Depends(get_db),
+):
+    # Check whether email already exists
+    existing_user = (
+        db.query(User)
+        .filter(User.email == officer.email)
+        .first()
+    )
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Email is already registered.",
+        )
+
+    # Create officer account
+    new_officer = User(
+        name=officer.name,
+        email=officer.email,
+        password=officer.password,
+        role="officer",
+        category=officer.category,
+    )
+
+    db.add(new_officer)
+    db.commit()
+    db.refresh(new_officer)
+
+    return {
+        "message": "Officer account created successfully.",
+        "officer_id": new_officer.id,
+        "name": new_officer.name,
+        "email": new_officer.email,
+        "category": new_officer.category,
+        "role": new_officer.role,
+    }
+
 def register_user(
     user: UserCreate,
     db: Session = Depends(get_db),
@@ -249,6 +302,30 @@ async def create_problem(
     else:
         predicted_category = "Unclassified"
 
+
+
+
+        
+    # --------------------------------------------------
+    # AUTOMATIC OFFICER ASSIGNMENT
+    # --------------------------------------------------
+
+    assigned_officer = (
+        db.query(User)
+        .filter(
+            User.role == "officer",
+            User.category == predicted_category,
+        )
+        .first()
+    )
+
+    assigned_officer_id = (
+        assigned_officer.id
+        if assigned_officer is not None
+        else None
+    )
+
+
     # --------------------------------------------------
     # IMAGE UPLOAD
     # --------------------------------------------------
@@ -316,6 +393,7 @@ async def create_problem(
         longitude=longitude,
         status="pending",
         user_id=user_id,
+     assigned_officer_id=assigned_officer_id,
     )
 
     try:
@@ -340,6 +418,46 @@ async def create_problem(
             status_code=500,
             detail="Could not save the report. Check the database configuration.",
         )
+
+# --------------------------------------------------
+# GET OFFICER ASSIGNED REPORTS
+# --------------------------------------------------
+
+@app.get(
+    "/officer/problems",
+    response_model=list[ProblemResponse],
+)
+def get_officer_problems(
+    officer_id: int,
+    db: Session = Depends(get_db),
+):
+    # Check officer account
+    officer = (
+        db.query(User)
+        .filter(
+            User.id == officer_id,
+            User.role == "officer",
+        )
+        .first()
+    )
+
+    if officer is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Officer account not found.",
+        )
+
+    # Get reports assigned to this officer
+    reports = (
+        db.query(Problem)
+        .filter(
+            Problem.assigned_officer_id == officer_id
+        )
+        .order_by(Problem.id.desc())
+        .all()
+    )
+
+    return reports
 
 
 # --------------------------------------------------
