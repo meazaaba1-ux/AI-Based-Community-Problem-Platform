@@ -154,9 +154,11 @@ form.addEventListener("submit", async function(event) {
     button.disabled = true;
     button.textContent = "Registering...";
 
-    try {
+   try {
 
-        const response = await fetch(`${API_URL}/register`, {
+   const response = await fetch(
+    `${API_URL}/register`,
+        {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -166,36 +168,59 @@ form.addEventListener("submit", async function(event) {
                 email: email,
                 password: password
             })
-        });
+        }
+    );
 
-        const data = await response.json();
+    // Read response safely
+    const responseText = await response.text();
 
-        if (!response.ok) {
-            throw new Error(
-                data.detail || "Registration failed."
-            );
+    let data = {};
+
+    if (responseText) {
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error("Invalid JSON response:", responseText);
+        }
+    }
+
+    // Check registration result
+    if (!response.ok) {
+
+        let errorMessage = "Registration failed.";
+
+        if (Array.isArray(data.detail)) {
+            errorMessage = data.detail
+                .map(item => item.msg || JSON.stringify(item))
+                .join(", ");
+        } else if (typeof data.detail === "string") {
+            errorMessage = data.detail;
         }
 
-        message.style.color = "green";
-        message.textContent =
-            "Registration successful! You can now login.";
-
-        form.reset();
-
-    } catch (error) {
-
-        message.style.color = "red";
-        message.textContent =
-            error.message || "Unable to connect to server.";
-
-        console.error(error);
-
-    } finally {
-
-        button.disabled = false;
-        button.textContent = "Register";
-
+        throw new Error(errorMessage);
     }
+
+    // Registration successful
+    message.style.color = "green";
+    message.textContent =
+        "Registration successful! Please login.";
+
+    form.reset();
+
+} catch (error) {
+
+    message.style.color = "red";
+    message.textContent =
+        error.message || "Unable to connect to server.";
+
+    console.error("Registration error:", error);
+
+} finally {
+
+    button.disabled = false;
+    button.textContent = "Register";
+
+}
 
 });
 </script>

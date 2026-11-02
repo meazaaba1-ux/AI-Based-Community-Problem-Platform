@@ -100,11 +100,42 @@ except Exception as error:
     print(f"Could not load AI model: {error}")
 
 
+
 # --------------------------------------------------
-# REGISTER USER
+# REGISTER CITIZEN
 # --------------------------------------------------
 
 @app.post("/register", response_model=UserResponse)
+def register_user(
+    user: UserCreate,
+    db: Session = Depends(get_db),
+):
+    # Check whether email already exists
+    existing_user = (
+        db.query(User)
+        .filter(User.email == user.email)
+        .first()
+    )
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Email is already registered."
+        )
+
+    # Create citizen account
+    new_user = User(
+        name=user.name,
+        email=user.email,
+        password=user.password,
+        role="citizen",
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
 
 
 # --------------------------------------------------
@@ -123,7 +154,6 @@ def create_officer(
     officer: OfficerCreate,
     db: Session = Depends(get_db),
 ):
-    # Check whether email already exists
     existing_user = (
         db.query(User)
         .filter(User.email == officer.email)
@@ -133,10 +163,9 @@ def create_officer(
     if existing_user:
         raise HTTPException(
             status_code=400,
-            detail="Email is already registered.",
+            detail="Email is already registered."
         )
 
-    # Create officer account
     new_officer = User(
         name=officer.name,
         email=officer.email,
@@ -157,35 +186,6 @@ def create_officer(
         "category": new_officer.category,
         "role": new_officer.role,
     }
-
-def register_user(
-    user: UserCreate,
-    db: Session = Depends(get_db),
-):
-    existing_user = (
-        db.query(User)
-        .filter(User.email == user.email)
-        .first()
-    )
-
-    if existing_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Email is already registered.",
-        )
-
-    new_user = User(
-        name=user.name,
-        email=user.email,
-        password=user.password,
-        role="citizen",
-    )
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
 
 
 # --------------------------------------------------
